@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-var SocketIO = require("socket.io");
 // import { ChatRequest, ChatRequestViewModel, HeartBeatViewModel, UserViewModel } from '../model/ChatRequest';
 var enumerations_1 = require("../helper/enumerations");
 // import { func } from '../../node_modules/@types/joi';
@@ -8,7 +7,7 @@ var enumerations_1 = require("../helper/enumerations");
 // import * as Configs from "../configurations";
 var _pub = require('redis-connection')();
 var _sub = require('redis-connection')('subscriber');
-// var handleError = require('hapi-error').handleError;
+var handleError = require('hapi-error').handleError;
 //  const SocketIO = require("socket.io");
 var _io;
 var ConnectionList = [];
@@ -32,7 +31,6 @@ function init(io, callback) {
     });
 }
 function chatHandler(socket) {
-    console.log("User Connected, SocketId = " + socket.id);
     // New 1-1 Chat Request
     socket.on('Chat:Request', ChatRequestCallBack);
     // Get Users Contacts
@@ -60,15 +58,15 @@ function chatHandler(socket) {
     socket.on('io:message', MessageCallBack);
     socket.on('io:messageRead', MessageReadCallback);
     socket.on('io:messageDelivered', MessageDeliveredCallback);
-    // socket.on('error', function (error) {
-    //     handleError(error, error.stack);
-    // });
-    // socket.on('disconnect', function () {
-    //     UserStatus(socket, true);
-    // });
-    // socket.on('userstatus', function () {
-    //     UserStatus(socket, false);
-    // });
+    socket.on('error', function (error) {
+        handleError(error, error.stack);
+    });
+    socket.on('disconnect', function () {
+        UserStatus(socket, true);
+    });
+    socket.on('userstatus', function () {
+        UserStatus(socket, false);
+    });
     try {
         _pub.smembers(socket.handshake.query.user_id + ':contacts', function (err, contacts) {
             if (!err) {

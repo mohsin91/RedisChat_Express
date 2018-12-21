@@ -21,13 +21,13 @@ let _io: any;
 let ConnectionList: SocketIO = [];
 
 
-function init(listener, callback) {
+function init(io, callback) {
   // setup redis pub/sub independently of any socket.io connections
   _pub.on('ready', function () {
     // console.log("PUB Ready!");
     _sub.on('ready', function () {
       // now start the socket.io
-      _io = SocketIO.listen(listener);
+      _io = io;
       _io.on('connection', chatHandler);
       // Here's where all Redis messages get relayed to Socket.io clients
       _sub.on('message', function (channel, message) {
