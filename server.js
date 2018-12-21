@@ -9,7 +9,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var port = 8054;
+var port = 8060;
 
 
 var redisClient = require('redis-connection')();
@@ -53,7 +53,7 @@ http.listen(port, function () {
   require('./src/socket/index.js').init(io, function () {
     console.log(
       'Feeling Chatty?',
-      'listening on: http://192.168.112.65:8054'
+      'listening on: http://192.168.0.171:8060'
     );
   });
 });
